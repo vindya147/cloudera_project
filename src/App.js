@@ -11,6 +11,7 @@ import SignIn from './components/Signin/Signin';
 import ForgotPassword from './components/Forgotpassword/Forgotpassword';
 import VerifyEmail from './components/Verifyemail/Verifyemail';
 import Signup from './components/Signup/Signup';
+import SetNewPassword from './components/Setnewpassword/Setnewpassword';
 
 import { Routes, Route } from 'react-router-dom';
 
@@ -34,6 +35,7 @@ function App() {
         <Route path="/Forgot-password" element={<ForgotPassword />} />
         <Route path="/Verifyemail" element={<VerifyEmail />} />
         <Route path="/Signup" element={<Signup />} />
+        <Route path="/Setnewpassword" element={<SetNewPassword />} />
       </Routes>
     </div>
   );

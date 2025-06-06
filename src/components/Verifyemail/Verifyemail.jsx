@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import './Verifyemail.css';
+import { useNavigate } from 'react-router-dom';
 
 const VerifyEmail = () => {
   const [verificationCode, setVerificationCode] = useState(Array(5).fill(''));
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleInputChange = (value, index) => {
     if (isNaN(value)) return; // Only allow numeric input
@@ -27,6 +29,7 @@ const VerifyEmail = () => {
     }
     alert(`Verification code entered: ${code}`);
     setErrorMessage('');
+    navigate('/setnewpassword');
     // Add API call logic here for verification
   };
 
