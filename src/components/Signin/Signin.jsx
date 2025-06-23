@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Signin.css';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 
 
 function SignIn() {
@@ -8,11 +8,13 @@ function SignIn() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle authentication logic here
     alert(`Email: ${email}\nPassword: ${password}\nRemember Me: ${rememberMe}`);
+    navigate('/chatui');
   };
 
   return (
