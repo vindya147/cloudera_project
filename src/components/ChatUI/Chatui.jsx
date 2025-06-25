@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Chatui.css";
 import images from '../../constants/images';
 import { FaBars, FaSun, FaMoon, FaCog, FaGlobe, FaPlus, FaPaperPlane, FaUserCircle, FaChevronDown, FaCopy, FaEdit, FaTrash, FaThumbsUp, FaThumbsDown, FaCheck, FaTimes, FaQuestionCircle, FaSignOutAlt, FaDownload } from "react-icons/fa";
@@ -13,6 +14,8 @@ function useDebounce(fn, delay, deps = []) {
 }
 
 export default function ChatUI() {
+  const navigate = useNavigate();
+
   // Theme
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   useEffect(() => {
@@ -124,6 +127,54 @@ export default function ChatUI() {
   if (windowWidth > 1200) chatContainerMaxWidth = "900px";
   else if (windowWidth > 1024) chatContainerMaxWidth = "800px";
 
+  // --- User Profile Modal State ---
+  // Replace with actual user data from signup or context
+  const [user, setUser] = useState({
+    username: "kanda123",
+    name: "Kanda Kumar",
+    email: "kanda@example.com",
+    password: "password123"
+  });
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [profileForm, setProfileForm] = useState({ ...user });
+  const [profileError, setProfileError] = useState("");
+
+  // Open profile modal from dropdown
+  const openProfileModal = () => {
+    setProfileForm({ ...user });
+    setProfileError("");
+    setProfileModalOpen(true);
+    setProfileOpen(false);
+  };
+
+  // Handle profile form changes
+  const handleProfileChange = (e) => {
+    const { name, value } = e.target;
+    setProfileForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Save profile changes
+  const handleProfileSave = (e) => {
+    e.preventDefault();
+    if (!profileForm.username || !profileForm.name || !profileForm.email) {
+      setProfileError("Please fill in all fields.");
+      return;
+    }
+    if (profileForm.password.length < 6) {
+      setProfileError("Password must be at least 6 characters.");
+      return;
+    }
+    setUser({ ...profileForm });
+    setProfileModalOpen(false);
+    alert("Profile updated successfully!");
+  };
+
+  // Logout handler
+  const handleLogout = () => {
+    // Clear user session or tokens here if any
+    navigate("/signin");
+  };
+
   // Render
   return (
     <div className={`chatui-root ${theme}-theme`}>
@@ -177,16 +228,16 @@ export default function ChatUI() {
             <div className="user-profile-container">
               <button className="user-profile-btn" id="user-profile-btn" onClick={e => { e.stopPropagation(); setProfileOpen((v) => !v); }}>
                 <FaUserCircle />
-                <span className="user-name">Kanda</span>
+                <span className="user-name">{user.name}</span>
                 <FaChevronDown />
               </button>
               {profileOpen && (
                 <div className="profile-dropdown" id="profile-dropdown">
                   <div className="profile-header">
-                    <div className="profile-avatar">K</div>
+                    <div className="profile-avatar">{user.name[0]}</div>
                     <div className="profile-details">
-                      <div className="profile-name">Kanda Kumar</div>
-                      <div className="profile-email">kanda@example.com</div>
+                      <div className="profile-name">{user.name}</div>
+                      <div className="profile-email">{user.email}</div>
                     </div>
                   </div>
                   <div className="profile-stats">
@@ -204,16 +255,15 @@ export default function ChatUI() {
                     </div>
                   </div>
                   <div className="profile-actions">
-                    <button className="profile-action" id="profile-settings"><FaUserCircle /> Profile Settings</button>
+                    <button className="profile-action" id="profile-settings" onClick={openProfileModal}><FaUserCircle /> Profile Settings</button>
                     <button className="profile-action" id="help-support"><FaQuestionCircle /> Help & Support</button>
-                    <button className="profile-action danger" id="logout-btn"><FaSignOutAlt /> Logout</button>
+                    <button className="profile-action danger" id="logout-btn" onClick={handleLogout}><FaSignOutAlt /> Logout</button>
                   </div>
                 </div>
               )}
             </div>
           </div>
         </header>
-
         {/* Chat */}
         <div className="chat-main" id="chat-main">
           <div className="chat-container" style={{ maxWidth: chatContainerMaxWidth }}>
@@ -267,6 +317,67 @@ export default function ChatUI() {
           </div>
         </div>
       </main>
+
+      {/* Profile Modal */}
+      {profileModalOpen && (
+        <div className="profile-modal-overlay" onClick={() => setProfileModalOpen(false)}>
+          <div
+            className="profile-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3>User Profile</h3>
+            <form onSubmit={handleProfileSave} className="profile-form">
+              <label>Username</label>
+              <input
+                type="text"
+                name="username"
+                value={profileForm.username}
+                onChange={handleProfileChange}
+                required
+              />
+
+              <label>Name</label>
+              <input
+                type="text"
+                name="name"
+                value={profileForm.name}
+                onChange={handleProfileChange}
+                required
+              />
+
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                value={profileForm.email}
+                onChange={handleProfileChange}
+                required
+              />
+
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                value={profileForm.password}
+                onChange={handleProfileChange}
+                required
+                minLength={6}
+              />
+
+              {profileError && <p className="error-message">{profileError}</p>}
+
+              <div className="profile-buttons">
+                <button type="submit" className="save-btn">
+                  Save
+                </button>
+                <button type="button" className="logout-btn" onClick={handleLogout}>
+                  Logout
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Settings Modal */}
       {settingsOpen && (

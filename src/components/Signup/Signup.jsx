@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import './Signup.css';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
     password: '',
     showPassword: false,
   });
-
-  const [showPopup, setShowPopup] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -24,82 +24,96 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setShowPopup(true);
-    alert(`Account created for: ${formData.name}\nEmail: ${formData.email}`);
-    // Add your API call logic here
-  };
-
-  const redirectToSignIn = () => {
-    navigate('/signin'); // Redirect to the Sign-In page
+    setShowAlert(true);
+    setAlertMsg(`Account created for: ${formData.username}\nEmail: ${formData.email}`);
+    setTimeout(() => {
+      setShowAlert(false);
+      navigate('/signin');
+    }, 1800);
   };
 
   return (
     <div className="signup-page">
       <div className="signup-container">
-        <h2>Create an Account</h2>
-        <p>
-          Already have an account? <a href="/signin">Sign in</a>
-        </p>
-        <form onSubmit={handleSubmit}>
-          <label>What should we call you?</label>
-          <input
-            type="text"
-            name="name"
-            placeholder="Enter your profile name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-          />
+      
+          <i className="fas fa-robot" aria-hidden="true"></i>
+          <h2>Create Account</h2>
+        
+        <p>Join the RAG Assistant family today!</p>
 
-          <label>What’s your email?</label>
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your email address"
-            value={formData.email}
-            onChange={handleInputChange}
-            required
-          />
-
-          <label>Create a password</label>
-          <div className="password-wrapper">
+        <form className="signup-form" onSubmit={handleSubmit} autoComplete="off">
+          {/* Username Field */}
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
             <input
-              type={formData.showPassword ? 'text' : 'password'}
-              name="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleInputChange}
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Enter your username"
+              minLength={3}
               required
+              value={formData.username}
+              onChange={handleInputChange}
+              autoComplete="username"
             />
-            <span
-              className="toggle-password"
-              onClick={togglePasswordVisibility}
-              role="button"
-              tabIndex={0}
-              aria-label="Toggle password visibility"
-            >
-              {formData.showPassword ? 'Hide' : 'Show'}
-            </span>
           </div>
-          <p className="password-hint">
-            Use 8 or more characters with a mix of letters, numbers & symbols
-          </p>
-          <button type="submit" className="signup-btn">
-            Create an account
+
+          {/* Email Field */}
+          <div className="form-group">
+            <label htmlFor="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Enter your email"
+              required
+              value={formData.email}
+              onChange={handleInputChange}
+              autoComplete="email"
+            />
+          </div>
+
+          {/* Password Field */}
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <div className="password-wrapper">
+              <input
+                type={formData.showPassword ? 'text' : 'password'}
+                id="password"
+                name="password"
+                placeholder="Create a password"
+                minLength={6}
+                required
+                value={formData.password}
+                onChange={handleInputChange}
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={togglePasswordVisibility}
+              >
+                {formData.showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="signup-btn"
+            disabled={!formData.username || !formData.email || !formData.password}
+          >
+            Create Account
           </button>
         </form>
+
+        <p>
+          Already have an account? <Link to="/signin">Sign in</Link>
+        </p>
+
+        {showAlert && <div className="alert">{alertMsg}</div>}
       </div>
-        {showPopup && (
-        <div className="popup-overlay">
-          <div className="popup-modal">
-            <h3>Account Created Successfully!</h3>
-            <p>Your account has been created. Please sign in to continue.</p>
-            <button className="popup-btn" onClick={redirectToSignIn}>
-              Go to Sign In
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

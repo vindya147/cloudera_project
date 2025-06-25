@@ -6,8 +6,12 @@ body, html {
 
 .chatui-root {
   display: flex;
-  height: 100vh;
+  min-height: 600px;
+  width: 1200px;
   background: #1a1b23;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
 }
 
 /* Theme Variables */
@@ -726,4 +730,109 @@ body, html {
 
 @keyframes fadeOut {
   to { opacity: 0; }
+}
+/* Profile Modal Overlay */
+.profile-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Profile Modal Box */
+.profile-modal {
+  background: var(--modal-bg, #23263a);
+  color: var(--sidebar-title, #fff);
+  border-radius: 14px;
+  padding: 28px 32px 24px 32px;
+  width: 360px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.profile-modal h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-weight: 700;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.profile-form label {
+  font-weight: 600;
+  font-size: 0.97rem;
+  margin-bottom: 4px;
+}
+
+.profile-form input {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--input-border, #2b2e42);
+  background: var(--input-bg, #181a20);
+  color: var(--sidebar-title, #fff);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.profile-form input:focus {
+  border-color: var(--send-btn, #4e5bf2);
+}
+
+.error-message {
+  color: var(--danger, #e05a5a);
+  font-weight: 600;
+  text-align: center;
+  margin-top: -8px;
+  margin-bottom: 8px;
+}
+
+.profile-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  gap: 10px;
+}
+
+.save-btn,
+.logout-btn {
+  flex: 1;
+  padding: 12px 0;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.save-btn {
+  background-color: var(--send-btn, #4e5bf2);
+  color: #fff;
+  margin-right: 12px;
+}
+
+.save-btn:hover {
+  background-color: var(--send-btn-hover, #6c7bfa);
+}
+
+.logout-btn {
+  background-color: var(--danger, #e05a5a);
+  color: #fff;
+}
+
+.logout-btn:hover {
+  background-color: var(--danger-hover, #c13c3c);
 }
