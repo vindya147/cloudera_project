@@ -6,13 +6,44 @@ function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
+  const [alertType, setAlertType] = useState(''); // 'success' or 'error'
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Add your authentication logic here
-    alert(`Email: ${email}\nPassword: ${password}`);
-    navigate('/chatui'); // Redirect after successful login
+    setAlertMsg(''); // Clear previous alerts
+
+    try {
+      const response = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Login successful
+        setAlertType('success');
+        setAlertMsg(data.message || 'Login successful!');
+        // You might want to store user data or a token in localStorage/sessionStorage here
+        // localStorage.setItem('userToken', data.token); // Example if your backend sends a token
+        // localStorage.setItem('userData', JSON.stringify(data.user)); // Example to store user details
+
+        setTimeout(() => {
+          navigate('/chatui'); // Redirect to chat page
+        }, 1500); // Give user time to read success message
+      } else {
+        // Login failed
+        setAlertType('error');
+        setAlertMsg(data.error || 'Login failed. Please check your credentials.');
+      }
+    } catch (error) {
+      console.error('Login request failed:', error);
+      setAlertType('error');
+      setAlertMsg('Network error. Could not connect to the server.');
+    }
   };
 
   const togglePassword = () => setShowPassword(!showPassword);
@@ -79,6 +110,12 @@ function SignIn() {
                 </Link>
               </div>
             </div>
+
+            {alertMsg && (
+              <div className={`alert ${alertType === 'error' ? 'alert-error' : 'alert-success'}`}>
+                {alertMsg}
+              </div>
+            )}
 
             <button
               type="submit"

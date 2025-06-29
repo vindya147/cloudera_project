@@ -11,6 +11,7 @@ const Signup = () => {
   });
   const [showAlert, setShowAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
+  const [alertType, setAlertType] = useState('success'); // 'success' or 'error'
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -22,23 +23,49 @@ const Signup = () => {
     setFormData({ ...formData, showPassword: !formData.showPassword });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowAlert(true);
-    setAlertMsg(`Account created for: ${formData.username}\nEmail: ${formData.email}`);
-    setTimeout(() => {
-      setShowAlert(false);
-      navigate('/signin');
-    }, 1800);
+    setShowAlert(false);
+
+    try {
+      const res = await fetch('http://localhost:5000/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          name: formData.username // or add a separate name field if you have one
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setAlertType('success');
+        setAlertMsg('Account created! Redirecting to sign in...');
+        setShowAlert(true);
+        setTimeout(() => {
+          setShowAlert(false);
+          navigate('/signin');
+        }, 1800);
+      } else {
+        setAlertType('error');
+        setAlertMsg(data.error || 'Signup failed. Please try again.');
+        setShowAlert(true);
+      }
+    } catch (err) {
+      setAlertType('error');
+      setAlertMsg('Network error. Please try again.');
+      setShowAlert(true);
+    }
   };
 
   return (
     <div className="signup-page">
       <div className="signup-container">
-      
           <i className="fas fa-robot" aria-hidden="true"></i>
           <h2>Create Account</h2>
-        
         <p>Join the RAG Assistant family today!</p>
 
         <form className="signup-form" onSubmit={handleSubmit} autoComplete="off">
@@ -112,7 +139,11 @@ const Signup = () => {
           Already have an account? <Link to="/signin">Sign in</Link>
         </p>
 
-        {showAlert && <div className="alert">{alertMsg}</div>}
+        {showAlert && (
+          <div className={`alert ${alertType === 'error' ? 'alert-error' : 'alert-success'}`}>
+            {alertMsg}
+          </div>
+        )}
       </div>
     </div>
   );
